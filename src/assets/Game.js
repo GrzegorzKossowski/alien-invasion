@@ -1,20 +1,30 @@
+import { Hud as HUD } from './Hud';
+import { Alien } from './Alien'
+
 export class Game {
-    constructor(canvas) {
-        this.ctx = canvas.getContext("2d");
-        this.cw = canvas.width;
-        this.ch = canvas.height;
+    constructor() {
+        this.canvas = document.querySelector('canvas');
+        this.ctx = this.canvas.getContext("2d");
+        this.ctx.font = "normal bold 20px Helvetica";
+        this.ctx.fillStyle = "";
+        this.ctx.textBaseline = "top";
+        this.cw = this.canvas.width;
+        this.ch = this.canvas.height;
         this.lastFrame = 0;
         this.delta = 0;
         this.timestep = 1000 / 60;
-        this.state = {};
+        this.genTime = 5000;
+        this.mousePos = {x: 0, y: 0};
+
+        this.hud = null;
+        this.aliens = [];
+
     }
 
     init() {
-        this.ctx.font = "20px Georgia";
-        this.state = {
-            x: this.cw / 2,
-            y: this.ch / 2
-        }
+        this.canvas.addEventListener("mousedown", e => this.handleMouseClick(e), false);
+        this.hud = new HUD({ ctx: this.ctx });
+        this.createAlien();
     }
 
     mainLoop(timestamp) {
@@ -38,18 +48,55 @@ export class Game {
 
     update(delta) {
         // Update the state of the world for the elapsed time since last render
-        this.state.x += (delta / 32)
-        if (this.state.x > this.cw) {
-            this.state.x -= this.cw
-        }
+        this.aliens.forEach(alien => {
+            if (alien.y > this.ch) {
+                this.aliens.splice(this.aliens.indexOf(alien), 1);
+            }
+        })
     }
 
     draw() {
-        // Draw the state of the world
-        this.ctx.fillStyle = "red";
+        // clear context
         this.ctx.clearRect(0, 0, this.cw, this.ch)
-        this.ctx.fillRect(this.state.x - 2, this.state.y - 2, 2, 2)
-        this.ctx.fillText(`x: ${Math.floor(this.state.x)}`, 10, 20);
+        // Draw the state of the world
+
+        this.aliens.forEach(alien => alien.draw());
+
+        //draw HUD
+        this.hud.draw({ mousePos: this.mousePos});
+
+        //reset color to white
+        this.ctx.fillStyle = "rbga(255,255,255,1)";
+    }
+
+    handleMouseClick(event) {
+        this.mousePos = this.getMousePos(event);
+        // TODO: send rocket here
+        // ...
+    }
+
+    getMousePos(evt) {
+        let rect = this.canvas.getBoundingClientRect();
+        return {
+            x: Math.floor(evt.clientX - rect.left),
+            y: Math.floor(evt.clientY - rect.top)
+        };
+    }
+
+    createAlien() {
+        let alien = new Alien({
+            ctx: this.ctx,
+            cw: this.cw,
+            ch: this.ch
+        });
+        alien.init();
+        this.aliens.push(alien);
+        if (this.genTime > 1000) {
+            this.genTime -= Math.floor(Math.random() * 100) + 100;
+        }
+        setTimeout(() => {
+            this.createAlien();
+        }, (Math.random() * (this.genTime - 1000) + 1000));
     }
 
 }

@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+}
+.container {
+    margin: 0 auto;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.info {
+    border: 1px solid blue;
+}

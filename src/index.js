@@ -1,21 +1,8 @@
-import {User} from './User'
-import { getPremiumUsers } from './data';
+import { Game } from './assets/Game';
 import './styles/styles.css';
 
-const user = new User('John Doe');
-const app = document.querySelector('.app');
-const container = () => {
-    return (`
-        <div class='container'>
-            <div class='info'>
-                ${user.sayHello()}
-            </div>
-        </div>
-    `)
-}
+const canvas = document.querySelector('canvas');
+const theGame = new Game(canvas);
 
-console.log(user.sayHello());
-console.log(user.sayHelloTo('Mary Lou'));
-console.log(getPremiumUsers());
-
-app.innerHTML = container();
+theGame.init();
+requestAnimationFrame((timestamp => theGame.mainLoop(timestamp)));

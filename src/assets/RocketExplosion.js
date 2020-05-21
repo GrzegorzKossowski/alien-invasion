@@ -2,6 +2,7 @@ import { Explosion } from './Explosion';
 import { setup } from './setup';
 
 export class RocketExplosion extends Explosion {
+
     constructor(params) {
         super(params);
     }

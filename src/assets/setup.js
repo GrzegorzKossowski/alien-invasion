@@ -1,4 +1,5 @@
 export const setup = {
+    
     timeout: 150,
     alien: {
         size: 1,
@@ -17,5 +18,9 @@ export const setup = {
         color0: "rgba(255, 255, 255, 1",
         color1: "rgba(0, 255, 0, .5)",
         color2: "rgba(0, 255, 0, 0)"
+    },
+    hud: {
+        color: "rgba(0, 255, 10, .5)"
     }
+
 }

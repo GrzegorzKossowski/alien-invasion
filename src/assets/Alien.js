@@ -15,7 +15,7 @@ export class Alien extends Movable {
     init() {
         this.size = setup.alien.size;
         this.color =  setup.alien.color;
-        this.velocity = setup.alien.velocity;
+        this.velocity = (setup.alien.minVelocity + (setup.alien.maxVelocity - setup.alien.minVelocity) * Math.random()).toFixed(2);
         this.speedVectorCount(this.xTarget, this.yTarget);
     }
 

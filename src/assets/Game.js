@@ -3,6 +3,7 @@ import { Alien } from './Alien';
 import { AlienExplosion } from './AlienExplosion';
 import { RocketExplosion } from './RocketExplosion';
 import { Rocket } from './Rocket';
+import { setup } from './setup';
 
 export class Game {
     constructor() {
@@ -31,12 +32,14 @@ export class Game {
             shots: 0,
             kills: 0,
             ratio: 0,
+            ammo: 15,
+            money: 150,
             calcRatio: function () {
-                this.ratio = ((this.kills/this.shots)*100).toFixed(2);
+                this.ratio = ((this.kills / this.shots) * 100).toFixed(2);
             },
-            victimsRatio: function() {
-                this.victims += Math.floor(Math.random()*1000)+1000;
-            } 
+            victimsRatio: function () {
+                this.victims += Math.floor(Math.random() * 1000) + 1000;
+            }
         }
 
     }
@@ -50,6 +53,13 @@ export class Game {
         this.hud.init();
         this.city.src = "./assets/img/city25.png";
         this.createAlien();
+
+        this.reloader = 4;
+        this.myInterval = null;
+        this.rocketPrice = setup.rocket.price;
+        this.myInterval = setInterval(() => {
+            this.stats.money++;
+        }, 1000);
     }
 
     mainLoop(timestamp) {
@@ -86,12 +96,14 @@ export class Game {
                 explosion.init();
                 this.alienExplosions.push(explosion);
                 this.rockets.splice(this.rockets.indexOf(rocket), 1);
+                this.stats.calcRatio();
 
                 // dla każdego aliena, jeśli dystans mniejszy równy blast radius usuń
                 this.aliens.forEach(alien => {
                     if (rocket.explosionRangeCheck(alien.x, alien.y) <= explosion.blastRadius) {
                         this.aliens.splice(this.aliens.indexOf(alien), 1);
                         this.stats.kills++;
+                        this.stats.money += this.rocketPrice + Math.floor(this.rocketPrice * this.stats.ratio / 100);
                     }
                 })
             }
@@ -142,7 +154,7 @@ export class Game {
         this.alienExplosions.forEach(expl => expl.draw())
 
         //draw HUD
-        this.hud.draw({stats: this.stats});
+        this.hud.draw({ stats: this.stats });
 
         // draw rocket launcher
         this.ctx.fillStyle = "#ee0000";
@@ -155,8 +167,22 @@ export class Game {
     }
 
     handleMouseClick(event) {
-        this.mousePos = this.getMousePos(event);
-        this.createRocket();
+        if (this.stats.ammo) {
+            this.mousePos = this.getMousePos(event);
+            this.createRocket();
+            this.stats.ammo--;
+        } else {
+            this.reloadAmmo();
+        }
+    }
+    
+    reloadAmmo() {
+        for(let i=0; i<15; i++) {
+            if(this.stats.money >= setup.rocket.price) {
+                this.stats.ammo++;
+                this.stats.money -= setup.rocket.price;
+            }
+        }
     }
 
     getMousePos(evt) {
@@ -193,7 +219,7 @@ export class Game {
         rocket.init();
         this.rockets.push(rocket);
         this.stats.shots++;
-        this.stats.calcRatio();
+        
     }
 
 }

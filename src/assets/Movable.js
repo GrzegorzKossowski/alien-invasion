@@ -16,12 +16,10 @@ export class Movable {
         this.vJedn = 0;
         this.vxSpeed = 0;
         this.vySpeed = 0;
-        this.blastRadius = 0;
         this.color = "rgba(255,0,255,1)";
     }
 
     init(x, y) {
-        this.blastRadius = setup.blastrange;
         this.x = x;
         this.y = y;
         this.vxSpeed = 0;

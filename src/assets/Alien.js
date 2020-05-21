@@ -1,5 +1,5 @@
 import { Movable } from './Movable';
-import { alienSetup } from './alienSetup'
+import { setup } from './setup';
 
 export class Alien extends Movable {
 
@@ -13,7 +13,9 @@ export class Alien extends Movable {
     }
     
     init() {
-        this.size = alienSetup.size;
+        this.size = setup.alien.size;
+        this.color =  setup.alien.color;
+        this.velocity = setup.alien.velocity;
         this.speedVectorCount(this.xTarget, this.yTarget);
     }
 
